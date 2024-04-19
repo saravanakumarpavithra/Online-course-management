@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course Management with Multi-user Enrollment</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(120deg, #89f7fe, #66a6ff);
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+      width: 90%;
+      max-width: 600px;
+    }
+    .card-header {
+      background-color: #0056b3;
+      color: white;
+      padding: 10px 15px;
+      font-weight: bold;
+      border-radius: 6px 6px 0 0;
+      text-align: center;
+    }
+    .card-body {
+      padding: 20px;
+      background: #f9f9f9;
+    }
+    .course-item {
+      background: #e9ecef;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    .btn {
+      padding: 8px 16px;
+      margin-top: 8px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    .btn-danger {
+      background-color: #dc3545;
+    }
+    .btn:hover {
+      opacity: 0.8;
+    }
+    input, textarea {
+      border: 0;
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 4px;
+      background-color: skyblue;
+    }
+    .enrolled-list, .registered-list {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="card-header">
+    <h1>Course Management</h1>
+    <div id="usernameDisplay"></div>
+  </div>
+  <div class="card-body">
+    <input type="text" id="username" placeholder="Enter username">
+    <button onclick="login()">Login</button>
+    <hr>
+    <div id="courseList"></div>
+    <button onclick="viewCourses()">View Courses</button>
+    <button onclick="completeRegistration()" id="completeButton" style="display: none;">Complete</button>
+    <button onclick="showRegisteredCourses()" id="showRegCoursesButton" style="display: none;">Show Registered Courses</button>
+  </div>
+</div>
+
+<script>
+  let courses = JSON.parse(localStorage.getItem('courses')) || [];
+  let registeredCourses = JSON.parse(localStorage.getItem('registeredCourses')) || [];
+  let tempCourse = null;
+  let currentUser = null;
+
+  function login() {
+    currentUser = document.getElementById('username').value;
+    if (currentUser) {
+      document.getElementById('usernameDisplay').innerText = `Logged in as: ${currentUser}`;
+      displayCourses();
+    } else {
+      alert('Please enter a username');
+    }
+  }
+
+  function viewCourses() {
+    const list = document.getElementById('courseList');
+    list.innerHTML = '';
+    courses.forEach((course, index) => {
+      const courseItem = document.createElement('div');
+      courseItem.className = 'course-item';
+      courseItem.innerHTML = `
+        <div><strong>${course.title}</strong> - ${course.schedule}</div>
+        <button class="btn" onclick="registerCourse(${index})">Register</button>
+        ${registeredCourses.includes(course) ? '<button class="btn btn-danger" onclick="unregisterCourse(${index})">Delete</button>' : ''}
+      `;
+      list.appendChild(courseItem);
+    });
+    document.getElementById('completeButton').style.display = 'inline';
+  }
+
+  function registerCourse(index) {
+    const course = courses[index];
+    if (!registeredCourses.includes(course)) {
+      registeredCourses.push(course);
+      localStorage.setItem('registeredCourses', JSON.stringify(registeredCourses));
+      viewCourses();
+    } else {
+      alert("You have already registered for this course.");
+    }
+  }
+
+  function unregisterCourse(index) {
+    registeredCourses.splice(index, 1);
+    localStorage.setItem('registeredCourses', JSON.stringify(registeredCourses));
+    viewCourses();
+  }
+
+  function completeRegistration() {
+    document.getElementById('showRegCoursesButton').style.display = 'inline';
+  }
+
+  function showRegisteredCourses() {
+    window.open('registeredCourses.html', '_blank');
+  }
+</script>
+</body>
+</html>

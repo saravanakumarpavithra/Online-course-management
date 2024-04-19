@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registered Courses</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      padding: 20px;
+    }
+    .course-item {
+      background: #e9ecef;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Registered Courses</h1>
+  <div id="registeredCoursesList"></div>
+  <a href="paymentPage.html" class="btn">Pay Fees</a>
+
+  <script>
+    let registeredCourses = JSON.parse(localStorage.getItem('registeredCourses')) || [];
+
+    function displayRegisteredCourses() {
+      const list = document.getElementById('registeredCoursesList');
+      list.innerHTML = ''; 
+      
+      if (registeredCourses.length > 0) {
+        const lastCourse = registeredCourses[registeredCourses.length - 1]; 
+        const courseItem = document.createElement('div');
+        courseItem.className = 'course-item';
+        courseItem.innerHTML = `
+          <div><strong>${lastCourse.title}</strong> - ${lastCourse.schedule}</div>
+        `;
+        list.appendChild(courseItem);
+      } else {
+        list.innerHTML = '<div>No courses registered yet.</div>'; // Display message if no courses are registered
+      }
+    }
+
+    displayRegisteredCourses();
+  </script>
+</body>
+</html>
